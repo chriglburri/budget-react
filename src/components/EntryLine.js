@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, Icon, Segment } from "semantic-ui-react";
 
-function EntryLine({ description, value, isExpense = false }) {
+function EntryLine({ id, description, value, isExpense = false, deleteEntry }) {
     return (
         <Segment color={isExpense ? "red" : "green"}>
             <Grid columns={3} textAlign="right">
@@ -13,8 +13,12 @@ function EntryLine({ description, value, isExpense = false }) {
                         {value}
                     </Grid.Column>
                     <Grid.Column width={3}>
-                        <Icon name="edit" borded></Icon>
-                        <Icon name="trash" borded></Icon>
+                        <Icon name="edit" bordered></Icon>
+                        <Icon
+                            name="trash"
+                            bordered
+                            onClick={() => deleteEntry(id)}
+                        ></Icon>
                     </Grid.Column>
                 </Grid.Row>
             </Grid>
