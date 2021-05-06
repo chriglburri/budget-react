@@ -14,11 +14,12 @@ function App() {
         const result = entries.filter((entry) => entry.id !== id);
         setEntries(result);
     };
-    const addEntry = (description, value) => {
+    const addEntry = (description, value, isExpense) => {
         const result = entries.concat({
             id: entries.length + 1,
             description,
             value,
+            isExpense,
         });
         setEntries(result);
     };
