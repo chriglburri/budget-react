@@ -5,15 +5,32 @@ import DisplayBalance from "./components/DisplayBalance";
 import DisplayBalances from "./components/DisplayBalances";
 import EntryLines from "./components/EntryLines";
 import MainHeader from "./components/MainHeader";
+import ModalEdit from "./components/ModalEdit";
 import NewEntryForm from "./components/NewEntryForm";
 
 function App() {
-    // eslint-disable-next-line no-unused-vars
     const [entries, setEntries] = useState(initialEntries);
+    const [description, setDescription] = useState("");
+    const [value, setValue] = useState("");
+    const [isExpense, setIsExpense] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
+
+    const editEntry = (id) => {
+        if(id){
+            const index = entries.findIndex(e=>e.id===id);
+            const entry = entries[index];
+            setDescription(entry.description);
+            setValue(entry.value);
+            setIsExpense(entry.isExpense);
+            setIsOpen(true);
+        }
+    };
+    
     const deleteEntry = (id) => {
         const result = entries.filter((entry) => entry.id !== id);
         setEntries(result);
     };
+
     const addEntry = (description, value, isExpense) => {
         const result = entries.concat({
             id: entries.length + 1,
@@ -23,6 +40,7 @@ function App() {
         });
         setEntries(result);
     };
+
     return (
         <Container>
             <MainHeader title="Budget" />
@@ -38,10 +56,34 @@ function App() {
 
             <MainHeader title="History" type="h3" />
 
-            <EntryLines entries={entries} deleteEntry={deleteEntry} />
+            <EntryLines
+                entries={entries}
+                deleteEntry={deleteEntry}
+                editEntry={editEntry}
+            />
 
             <MainHeader title="Add new transaction" type="h3" />
-            <NewEntryForm addEntry={addEntry} />
+
+            <NewEntryForm
+                addEntry={addEntry}
+                description={description}
+                value={value}
+                isExpense={isExpense}
+                setDescription={setDescription}
+                setValue={setValue}
+                setIsExpense={setIsExpense}
+            />
+
+            <ModalEdit
+                isOpen={isOpen}
+                setIsOpen={setIsOpen}
+                description={description}
+                value={value}
+                isExpense={isExpense}
+                setDescription={setDescription}
+                setValue={setValue}
+                setIsExpense={setIsExpense}
+            />
         </Container>
     );
 }

@@ -1,7 +1,7 @@
 import React from "react";
 import EntryLine from "./EntryLine";
 
-function EntryLines({ entries, deleteEntry }) {
+function EntryLines({ entries, deleteEntry, editEntry }) {
     return (
         <>
             {entries.map((entry) => (
@@ -9,6 +9,7 @@ function EntryLines({ entries, deleteEntry }) {
                     key={entry.id}
                     {...entry}
                     deleteEntry={deleteEntry}
+                    editEntry={editEntry}
                 />
             ))}
         </>
