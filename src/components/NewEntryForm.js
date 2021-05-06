@@ -23,12 +23,7 @@ function NewEntryForm({
                 setIsExpense={setIsExpense}
             />
 
-            <ButtonSaveOrCancel
-                addEntry={addEntry}
-                description={addEntry.description}
-                value={addEntry.value}
-                isExpense={isExpense}
-            />
+            <ButtonSaveOrCancel addEntry={addEntry} />
         </Form>
     );
 }

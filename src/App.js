@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { Container } from "semantic-ui-react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import DisplayBalance from "./components/DisplayBalance";
 import DisplayBalances from "./components/DisplayBalances";
@@ -9,29 +8,61 @@ import ModalEdit from "./components/ModalEdit";
 import NewEntryForm from "./components/NewEntryForm";
 
 function App() {
-    const [entries, setEntries] = useState(initialEntries);
     const [description, setDescription] = useState("");
-    const [value, setValue] = useState("");
+    const [value, setValue] = useState(0);
     const [isExpense, setIsExpense] = useState(true);
     const [isOpen, setIsOpen] = useState(false);
+    const [entryId, setEntryId] = useState();
+    const [income, setIncome] = useState(0);
+    const [expenses, setExpenses] = useState(0);
+    const [total, setTotal] = useState(0);
+    const [entries, setEntries] = useState(initialEntries);
+
+    useEffect(() => {
+        let totalIncome = 0;
+        let totalExpense = 0;
+        entries.map((e) => {
+            if (e.isExpense) {
+                totalExpense += Number(e.value);
+            } else {
+                totalIncome += Number(e.value);
+            }
+        });
+        setIncome(totalIncome);
+        setExpenses(totalExpense);
+        setTotal(income-expenses);
+    }, [entries, expenses, income]);
+
+    useEffect(() => {
+        if (!isOpen && entryId) {
+            const index = entries.findIndex((entry) => entry.id === entryId);
+            const newEntries = [...entries];
+            newEntries[index].description = description;
+            newEntries[index].value = value;
+            newEntries[index].isExpense = isExpense;
+            setEntries(newEntries);
+            resetEntry();
+        }
+    }, [isOpen]);
 
     const editEntry = (id) => {
-        if(id){
-            const index = entries.findIndex(e=>e.id===id);
+        if (id) {
+            const index = entries.findIndex((e) => e.id === id);
             const entry = entries[index];
+            setEntryId(id);
             setDescription(entry.description);
             setValue(entry.value);
             setIsExpense(entry.isExpense);
             setIsOpen(true);
         }
     };
-    
+
     const deleteEntry = (id) => {
         const result = entries.filter((entry) => entry.id !== id);
         setEntries(result);
     };
 
-    const addEntry = (description, value, isExpense) => {
+    const addEntry = () => {
         const result = entries.concat({
             id: entries.length + 1,
             description,
@@ -39,20 +70,27 @@ function App() {
             isExpense,
         });
         setEntries(result);
+        resetEntry();
+    };
+
+    const resetEntry = () => {
+        setDescription("");
+        setValue(0);
+        setIsExpense(true);
     };
 
     return (
-        <Container>
+        <>
             <MainHeader title="Budget" />
 
             <DisplayBalance
                 title="Your Balance:"
-                value="2550.53"
+                value={total}
                 color="red"
                 size="small"
             />
 
-            <DisplayBalances />
+            <DisplayBalances income={income} expenses={expenses} />
 
             <MainHeader title="History" type="h3" />
 
@@ -84,7 +122,7 @@ function App() {
                 setValue={setValue}
                 setIsExpense={setIsExpense}
             />
-        </Container>
+        </>
     );
 }
 
@@ -94,19 +132,19 @@ var initialEntries = [
     {
         id: 1,
         description: "Work income",
-        value: "1000.00",
+        value: 1000.00,
         isExpense: false,
     },
     {
         id: 2,
         description: "Water bill",
-        value: "20.00",
+        value: 20.00,
         isExpense: true,
     },
     {
         id: 3,
         description: "Rent",
-        value: "200.00",
+        value: 200.00,
         isExpense: true,
     },
 ];
