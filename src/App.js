@@ -27,10 +27,12 @@ function App() {
             } else {
                 totalIncome += Number(e.value);
             }
+            return null;
         });
         setIncome(totalIncome);
         setExpenses(totalExpense);
         setTotal(income-expenses);
+        // eslint-disable-next-linereact-hooks/exhaustive-deps
     }, [entries, expenses, income]);
 
     useEffect(() => {
