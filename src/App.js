@@ -6,7 +6,6 @@ import EntryLines from "./components/EntryLines";
 import MainHeader from "./components/MainHeader";
 import ModalEdit from "./components/ModalEdit";
 import NewEntryForm from "./components/NewEntryForm";
-import { createStore, combineReducers } from "redux";
 
 function App() {
     const [description, setDescription] = useState("");
@@ -47,44 +46,6 @@ function App() {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen]);
-
-    const entriesReducer= (state = initialEntries,action)=>{
-        let newEntries;
-        switch (action.type) {
-            case 'ADD_ENTRY':
-                newEntries = state.concat({...action.payload});
-                return newEntries;
-
-            case 'REMOVE_ENTRY':
-                newEntries = state.filter(e=>e.id!==action.payload.id);
-                return newEntries;
-
-            default:
-                return state;
-        }
-    };
-    const combinedReducers = combineReducers({
-        entries: entriesReducer,
-    });
-    const store = createStore(combinedReducers);
-    store.subscribe(()=>{
-        console.log(store.getState());
-    })
-    const payload = {
-        id: 4,
-        description: "hello",
-        value: 100,
-        isExpense: false,
-    };
-    const addEntryRedux  = (payload)=>{
-        return { type: "ADD_ENTRY", payload };
-    };
-    const removeEntryRedux = (id)=>{
-        return {type:'REMOVE_ENTRY', payload:{id}};
-    };
-
-    store.dispatch(addEntryRedux(payload));
-    store.dispatch(removeEntryRedux(1));
 
     const editEntry = (id) => {
         if (id) {
