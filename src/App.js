@@ -6,6 +6,7 @@ import EntryLines from "./components/EntryLines";
 import MainHeader from "./components/MainHeader";
 import ModalEdit from "./components/ModalEdit";
 import NewEntryForm from "./components/NewEntryForm";
+import { createStore } from "redux";
 
 function App() {
     const [description, setDescription] = useState("");
@@ -31,7 +32,7 @@ function App() {
         });
         setIncome(totalIncome);
         setExpenses(totalExpense);
-        setTotal(income-expenses);
+        setTotal(income - expenses);
     }, [entries, expenses, income]);
 
     useEffect(() => {
@@ -46,6 +47,33 @@ function App() {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen]);
+
+    const store = createStore((state = initialEntries, action) => {
+        let newEntries;
+        switch (action.type) {
+            case 'ADD_ENTRY':
+                newEntries = state.concat({...action.payload});
+                return newEntries;
+
+            case 'REMOVE_ENTRY':
+                newEntries = state.filter(e=>e.id!==action.payload.id);
+                return newEntries;
+
+            default:
+                return state;
+        }
+    });
+    store.subscribe(()=>{
+        console.log(store.getState());
+    })
+    const payload = {
+        id: 4,
+        description: "hello",
+        value: 100,
+        isExpense: false,
+    };
+    store.dispatch({ type: "ADD_ENTRY", payload });
+    store.dispatch({type:'REMOVE_ENTRY', payload:{id:1}});
 
     const editEntry = (id) => {
         if (id) {
@@ -134,19 +162,19 @@ var initialEntries = [
     {
         id: 1,
         description: "Work income",
-        value: 1000.00,
+        value: 1000.0,
         isExpense: false,
     },
     {
         id: 2,
         description: "Water bill",
-        value: 20.00,
+        value: 20.0,
         isExpense: true,
     },
     {
         id: 3,
         description: "Rent",
-        value: 200.00,
+        value: 200.0,
         isExpense: true,
     },
 ];
