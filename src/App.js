@@ -72,8 +72,15 @@ function App() {
         value: 100,
         isExpense: false,
     };
-    store.dispatch({ type: "ADD_ENTRY", payload });
-    store.dispatch({type:'REMOVE_ENTRY', payload:{id:1}});
+    const addEntryRedux  = (payload)=>{
+        return { type: "ADD_ENTRY", payload };
+    };
+    const removeEntryRedux = (id)=>{
+        return {type:'REMOVE_ENTRY', payload:{id}};
+    };
+
+    store.dispatch(addEntryRedux(payload));
+    store.dispatch(removeEntryRedux(1));
 
     const editEntry = (id) => {
         if (id) {
