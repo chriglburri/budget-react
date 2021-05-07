@@ -48,7 +48,7 @@ function App() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen]);
 
-    const store = createStore((state = initialEntries, action) => {
+    const entriesReducer= (state = initialEntries,action)=>{
         let newEntries;
         switch (action.type) {
             case 'ADD_ENTRY':
@@ -62,7 +62,8 @@ function App() {
             default:
                 return state;
         }
-    });
+    };
+    const store = createStore(entriesReducer);
     store.subscribe(()=>{
         console.log(store.getState());
     })
