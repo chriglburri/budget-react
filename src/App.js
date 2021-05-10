@@ -6,6 +6,7 @@ import EntryLines from "./components/EntryLines";
 import MainHeader from "./components/MainHeader";
 import ModalEdit from "./components/ModalEdit";
 import NewEntryForm from "./components/NewEntryForm";
+import{useSelector} from 'react-redux';
 
 function App() {
     const [description, setDescription] = useState("");
@@ -16,12 +17,13 @@ function App() {
     const [income, setIncome] = useState(0);
     const [expenses, setExpenses] = useState(0);
     const [total, setTotal] = useState(0);
-    const [entries, setEntries] = useState(initialEntries);
+
+    const entriesRedux = useSelector((state) => state.entries);
 
     useEffect(() => {
         let totalIncome = 0;
         let totalExpense = 0;
-        entries.map((e) => {
+        entriesRedux.map((e) => {
             if (e.isExpense) {
                 totalExpense += Number(e.value);
             } else {
@@ -32,16 +34,16 @@ function App() {
         setIncome(totalIncome);
         setExpenses(totalExpense);
         setTotal(income - expenses);
-    }, [entries, expenses, income]);
+    }, [entriesRedux, expenses, income]);
 
     useEffect(() => {
         if (!isOpen && entryId) {
-            const index = entries.findIndex((entry) => entry.id === entryId);
-            const newEntries = [...entries];
+            const index = entriesRedux.findIndex((entry) => entry.id === entryId);
+            const newEntries = [...entriesRedux];
             newEntries[index].description = description;
             newEntries[index].value = value;
             newEntries[index].isExpense = isExpense;
-            setEntries(newEntries);
+            // setEntries(newEntries);
             resetEntry();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -49,8 +51,8 @@ function App() {
 
     const editEntry = (id) => {
         if (id) {
-            const index = entries.findIndex((e) => e.id === id);
-            const entry = entries[index];
+            const index = entriesRedux.findIndex((e) => e.id === id);
+            const entry = entriesRedux[index];
             setEntryId(id);
             setDescription(entry.description);
             setValue(entry.value);
@@ -59,19 +61,14 @@ function App() {
         }
     };
 
-    const deleteEntry = (id) => {
-        const result = entries.filter((entry) => entry.id !== id);
-        setEntries(result);
-    };
-
     const addEntry = () => {
-        const result = entries.concat({
-            id: entries.length + 1,
+        const result = entriesRedux.concat({
+            id: entriesRedux.length + 1,
             description,
             value,
             isExpense,
         });
-        setEntries(result);
+        // setEntries(result);
         resetEntry();
     };
 
@@ -97,8 +94,7 @@ function App() {
             <MainHeader title="History" type="h3" />
 
             <EntryLines
-                entries={entries}
-                deleteEntry={deleteEntry}
+                entries={entriesRedux}
                 editEntry={editEntry}
             />
 
@@ -129,24 +125,3 @@ function App() {
 }
 
 export default App;
-
-var initialEntries = [
-    {
-        id: 1,
-        description: "Work income",
-        value: 1000.0,
-        isExpense: false,
-    },
-    {
-        id: 2,
-        description: "Water bill",
-        value: 20.0,
-        isExpense: true,
-    },
-    {
-        id: 3,
-        description: "Rent",
-        value: 200.0,
-        isExpense: true,
-    },
-];
