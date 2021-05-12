@@ -6,24 +6,27 @@ import EntryLines from "./components/EntryLines";
 import MainHeader from "./components/MainHeader";
 import ModalEdit from "./components/ModalEdit";
 import NewEntryForm from "./components/NewEntryForm";
-import{useSelector} from 'react-redux';
+import { useSelector } from "react-redux";
 
 function App() {
-    const [description, setDescription] = useState("");
-    const [value, setValue] = useState(0);
-    const [isExpense, setIsExpense] = useState(true);
-    const [isOpen, setIsOpen] = useState(false);
-    const [entryId, setEntryId] = useState();
     const [income, setIncome] = useState(0);
     const [expenses, setExpenses] = useState(0);
     const [total, setTotal] = useState(0);
+    const { isOpen, id } = useSelector((state) => state.modals);
+    const [entry, setEntry] = useState();
+    const entries = useSelector((state) => state.entries);
 
-    const entriesRedux = useSelector((state) => state.entries);
+    useEffect(() => {
+        const index = entries.findIndex((entry) => entry.id === id);
+        setEntry(entries[index]);
+        // todo
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen, id]);
 
     useEffect(() => {
         let totalIncome = 0;
         let totalExpense = 0;
-        entriesRedux.map((e) => {
+        entries.map((e) => {
             if (e.isExpense) {
                 totalExpense += Number(e.value);
             } else {
@@ -34,49 +37,7 @@ function App() {
         setIncome(totalIncome);
         setExpenses(totalExpense);
         setTotal(income - expenses);
-    }, [entriesRedux, expenses, income]);
-
-    useEffect(() => {
-        if (!isOpen && entryId) {
-            const index = entriesRedux.findIndex((entry) => entry.id === entryId);
-            const newEntries = [...entriesRedux];
-            newEntries[index].description = description;
-            newEntries[index].value = value;
-            newEntries[index].isExpense = isExpense;
-            // setEntries(newEntries);
-            resetEntry();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isOpen]);
-
-    const editEntry = (id) => {
-        if (id) {
-            const index = entriesRedux.findIndex((e) => e.id === id);
-            const entry = entriesRedux[index];
-            setEntryId(id);
-            setDescription(entry.description);
-            setValue(entry.value);
-            setIsExpense(entry.isExpense);
-            setIsOpen(true);
-        }
-    };
-
-    const addEntry = () => {
-        const result = entriesRedux.concat({
-            id: entriesRedux.length + 1,
-            description,
-            value,
-            isExpense,
-        });
-        // setEntries(result);
-        resetEntry();
-    };
-
-    const resetEntry = () => {
-        setDescription("");
-        setValue(0);
-        setIsExpense(true);
-    };
+    }, [entries, expenses, income]);
 
     return (
         <>
@@ -93,33 +54,13 @@ function App() {
 
             <MainHeader title="History" type="h3" />
 
-            <EntryLines
-                entries={entriesRedux}
-                editEntry={editEntry}
-            />
+            <EntryLines entries={entries} />
 
             <MainHeader title="Add new transaction" type="h3" />
 
-            <NewEntryForm
-                addEntry={addEntry}
-                description={description}
-                value={value}
-                isExpense={isExpense}
-                setDescription={setDescription}
-                setValue={setValue}
-                setIsExpense={setIsExpense}
-            />
+            <NewEntryForm />
 
-            <ModalEdit
-                isOpen={isOpen}
-                setIsOpen={setIsOpen}
-                description={description}
-                value={value}
-                isExpense={isExpense}
-                setDescription={setDescription}
-                setValue={setValue}
-                setIsExpense={setIsExpense}
-            />
+            <ModalEdit isOpen={isOpen} {...entry} />
         </>
     );
 }
