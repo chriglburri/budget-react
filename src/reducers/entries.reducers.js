@@ -14,12 +14,16 @@ const reducer = (state = initialEntries, action) => {
             newEntries = state.filter((e) => e.id !== action.payload.id);
             return newEntries;
 
+        case types.POPULATE_ENTRY_DETAILS:
         case types.UPDATE_ENTRY:
             newEntries = [...state];
             const index = newEntries.findIndex(
                 (entry) => entry.id === action.payload.id
             );
-            newEntries[index] = { ...action.payload.entry };
+            newEntries[index] = {
+                ...newEntries[index],
+                ...action.payload.entry,
+            };
             return newEntries;
 
         default:
