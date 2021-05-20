@@ -10,7 +10,7 @@ const reducer = (state = initialEntries, action) => {
             newEntries = state.concat({ ...action.payload });
             return newEntries;
 
-        case types.REMOVE_ENTRY:
+        case types.REMOVE_ENTRY_RESULT:
             newEntries = state.filter((e) => e.id !== action.payload.id);
             return newEntries;
 

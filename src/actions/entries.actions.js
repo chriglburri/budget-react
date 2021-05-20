@@ -4,6 +4,7 @@ const types = {
     POPULATE_ENTRY_DETAILS: "POPULATE_ENTRY_DETAILS",
     ADD_ENTRY: "ADD_ENTRY",
     REMOVE_ENTRY: "REMOVE_ENTRY",
+    REMOVE_ENTRY_RESULT: "REMOVE_ENTRY_RESULT",
     UPDATE_ENTRY: "UPDATE_ENTRY",
 };
 export default types;
@@ -22,6 +23,10 @@ export const populateEntryDetails = (id, entry) => {
 
 export const addEntryRedux = (payload) => {
     return { type: types.ADD_ENTRY, payload };
+};
+
+export const removeEntryResultRedux = (id) => {
+    return { type: types.REMOVE_ENTRY_RESULT, payload: { id } };
 };
 
 export const removeEntryRedux = (id) => {
